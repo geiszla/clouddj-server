@@ -48,8 +48,8 @@ function startWebserver(port) {
   );
 
   const options = {
-    key: fs.readFileSync(path.join(__dirname, '/ssl/key.pem')),
-    cert: fs.readFileSync(path.join(__dirname, '/ssl/cert.crt')),
+    key: fs.readFileSync(path.join(__dirname, '../ssl/key.pem')),
+    cert: fs.readFileSync(path.join(__dirname, '../ssl/cert.crt')),
     passphrase: 'iManT'
   };
 
