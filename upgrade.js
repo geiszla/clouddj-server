@@ -47,7 +47,7 @@ async function compareDependencies(oldDependencies) {
 
   const newObject = {};
   for (let i = 0; i < newDependencies.length; i++) {
-    newObject[newDependencies[i][0]] = newDependencies[i][1];
+    [, newObject[newDependencies[i][0]]] = newDependencies[i];
   }
 
   let isUpdated = false;

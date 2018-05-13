@@ -1,11 +1,14 @@
 exports.print = (text) => {
-  console.error(`[Info] ${text}`);
+  const timeStamp = new Date().toLocaleString();
+  console.error(`[${timeStamp}][Info] ${text}`);
 };
 
 exports.printWarning = (text) => {
-  console.warn(`[Warning] ${text}`);
+  const timeStamp = new Date().toLocaleString();
+  console.warn(`[${timeStamp}][Warning] ${text}`);
 };
 
 exports.printError = (text) => {
-  console.log(`[Error] ${text}`);
+  const timeStamp = new Date().toLocaleString();
+  console.log(`[${timeStamp}][Error] ${text}`);
 };

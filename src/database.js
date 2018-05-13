@@ -1,16 +1,19 @@
 const mongoose = require('mongoose');
+const { printError } = require('./utils');
 
 mongoose.Promise = Promise;
 
 // Connect
-exports.connect = () => {
+exports.connect = (address) => {
   const mongooseOptions = { keepAlive: 300000, connectTimeoutMS: 30000 };
 
-  const mongoServer = 'localhost:27017';
-  return mongoose.connect(`mongodb://${mongoServer}`, mongooseOptions).then(() => {
-    console.log('abc');
-    return mongoServer;
-  });
+  try {
+    mongoose.connect(`mongodb://${address}`, mongooseOptions);
+    return true;
+  } catch (exception) {
+    printError(`Error: ${exception.message}`);
+    return false;
+  }
 };
 
 // YouTube

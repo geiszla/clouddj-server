@@ -17,37 +17,41 @@ exports.addSong = async (urlString) => {
 
   if (!supportedSources.some(name => hostname.includes(name))) {
     printError(`The source is not supported: ${hostname}`);
-    return;
+    return false;
   }
 
-  const id = pathname.substring(1, pathname.length);
+  const videoId = pathname.substring(1, pathname.length);
 
-  youtube.videos.list({
-    id,
-    part: 'snippet,contentDetails'
-  }).then((response) => {
-    const videoInfo = response.data.items[0];
-    const { title, thumbnails } = videoInfo.snippet;
-    const thumbnail = thumbnails.high.url;
-    const durationString = videoInfo.contentDetails.duration;
+  let videoInfo;
+  try {
+    [videoInfo] = (await youtube.videos.list({
+      id: videoId,
+      part: 'snippet,contentDetails'
+    })).data.items;
+  } catch (exception) {
+    printError(`Error fetching video info: ${exception.message}`);
+    return false;
+  }
 
-    const durationRegex = new RegExp('T(?:(\\d+)H)?(?:(\\d{1,2})M)?(?:(\\d{1,2})S)?');
-    const durationMatch = durationString.match(durationRegex);
+  const { title, thumbnails } = videoInfo.snippet;
+  const thumbnail = thumbnails.high.url;
+  const durationString = videoInfo.contentDetails.duration;
 
-    const hours = durationMatch[1] === undefined ? 0 : durationMatch[1];
-    const minutes = durationMatch[2] === undefined ? 0 : durationMatch[2];
-    const seconds = durationMatch[3] === undefined ? 0 : durationMatch[3];
-    const duration = new Date(0, 0, 0, hours, minutes, seconds);
+  const durationRegex = new RegExp('T(?:(\\d+)H)?(?:(\\d{1,2})M)?(?:(\\d{1,2})S)?');
+  const durationMatch = durationString.match(durationRegex);
 
-    const video = new YoutubeVideo({
-      url, youtubeId: id, title, thumbnail, duration
-    });
-    video.save().then((savedVideo) => {
-      print(`Video added to the playlist: ${savedVideo.title}`);
-    });
-  }).catch((err) => {
-    printError(err);
+  const hours = durationMatch[1] === undefined ? 0 : durationMatch[1];
+  const minutes = durationMatch[2] === undefined ? 0 : durationMatch[2];
+  const seconds = durationMatch[3] === undefined ? 0 : durationMatch[3];
+  const duration = new Date(0, 0, 0, hours, minutes, seconds);
+
+  const video = new YoutubeVideo({
+    url, videoId, title, thumbnail, duration
   });
+  const savedVideo = await video.save();
+
+  print(`Video added to the playlist: ${savedVideo.title}`);
+  return true;
 };
 
 exports.removeSong = (link) => {

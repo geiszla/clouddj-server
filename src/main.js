@@ -1,5 +1,3 @@
-const { print, printError } = require('./utils');
-
 const { addSong } = require('./playlist');
 const compression = require('compression');
 const database = require('./database');
@@ -9,22 +7,23 @@ const graphqlHTTP = require('express-graphql');
 const graphQLSchema = require('./api');
 const https = require('https');
 const path = require('path');
+const { print } = require('./utils');
 
 global.Promise = require('bluebird');
 
-// MongoDB Database
-database.connect().then((mongoServer) => {
-  print(`Connected to MongoDB server at ${mongoServer}.`);
-  startWebserver(443);
-}).catch((err) => {
-  printError(`Error: ${err.message}`);
-  process.exit(1);
-});
+main();
 
-function startWebserver(port) {
+async function main() {
+  // MongoDB Database
+  const mongoAddress = 'localhost:27017';
+  if (!database.connect(mongoAddress)) process.exit(1);
+  print(`Connected to MongoDB server at mongodb://${mongoAddress}`);
+
   // HTTPS Webserver
   const app = express();
   app.use(compression());
+
+  // Additional express middlewares
   // app.use(bodyParser.json());
   // app.use(cookieParser());
   // app.use(session({
@@ -33,7 +32,7 @@ function startWebserver(port) {
   //   saveUninitialized: false
   // }));
 
-  // GraphQL
+  // GraphQL express middleware
   app.use(
     '/api',
     (req, res, next) => {
@@ -53,8 +52,10 @@ function startWebserver(port) {
     passphrase: 'iManT'
   };
 
+  // Start server
+  const port = 443;
   https.createServer(options, app).listen(port);
-  print(`HTTPS webserver is listening on port ${port}.`);
+  print(`HTTPS webserver is listening at https://localhost:${port}/`);
 
   addSong('https://youtu.be/dQw4w9WgXcQ');
 }
