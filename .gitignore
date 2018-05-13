@@ -119,4 +119,4 @@ server.bundle.js
 www/bundle.js
 !www/external/
 tmp/
-keys.jsson
+keys.json
