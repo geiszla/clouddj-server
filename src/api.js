@@ -6,7 +6,7 @@ const {
   GraphQLString
 } = require('graphql');
 
-const { addSong } = require('./playlist');
+const { addSong, removeSong } = require('./playlist');
 
 // Queries
 const queryType = new GraphQLObjectType({
@@ -38,7 +38,14 @@ const mutationType = new GraphQLObjectType({
       args: {
         link: { type: new GraphQLNonNull(GraphQLString) }
       },
-      resolve: () => false
+      resolve: async (_, { link }) => addSong(link)
+    },
+    removeSong: {
+      type: new GraphQLNonNull(GraphQLBoolean),
+      args: {
+        playlistSongId: { type: new GraphQLNonNull(GraphQLString) }
+      },
+      resolve: async (_, { playlistSongId }) => removeSong(playlistSongId)
     }
   }
 });
