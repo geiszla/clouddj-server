@@ -1,59 +1,46 @@
-const { google } = require('googleapis');
-const keys = require('../keys.json');
 const { print, printError } = require('./utils');
-const { URL } = require('url');
-const { YoutubeVideo } = require('./database');
 
-const supportedSources = ['youtube', 'youtu.be'];
+const { getSong } = require('./sources');
+const { PlaylistSong } = require('./database');
 
-const youtube = google.youtube({
-  version: 'v3',
-  auth: keys.youtube
-});
-
-exports.addSong = async (urlString) => {
-  const url = new URL(urlString);
-  const { pathname, hostname } = url;
-
-  if (!supportedSources.some(name => hostname.includes(name))) {
-    printError(`The source is not supported: ${hostname}`);
+exports.addSong = async (url) => {
+  // Get song from source
+  const song = await getSong(url);
+  if (!song) {
+    printError("Couldn't get song.");
     return false;
   }
 
-  const videoId = pathname.substring(1, pathname.length);
-
-  let videoInfo;
+  // Add song to the playlist
+  let playlistSong;
   try {
-    [videoInfo] = (await youtube.videos.list({
-      id: videoId,
-      part: 'snippet,contentDetails'
-    })).data.items;
+    playlistSong = await (new PlaylistSong({
+      added: new Date(),
+      url: song.url,
+      title: song.title,
+      thumbnail: song.thumbnail,
+      duration: song.duration
+    }).save());
   } catch (exception) {
-    printError(`Error fetching video info: ${exception.message}`);
+    printError(`Couldn't add song to playlist: ${exception.message}`);
     return false;
   }
 
-  const { title, thumbnails } = videoInfo.snippet;
-  const thumbnail = thumbnails.high.url;
-  const durationString = videoInfo.contentDetails.duration;
-
-  const durationRegex = new RegExp('T(?:(\\d+)H)?(?:(\\d{1,2})M)?(?:(\\d{1,2})S)?');
-  const durationMatch = durationString.match(durationRegex);
-
-  const hours = durationMatch[1] === undefined ? 0 : durationMatch[1];
-  const minutes = durationMatch[2] === undefined ? 0 : durationMatch[2];
-  const seconds = durationMatch[3] === undefined ? 0 : durationMatch[3];
-  const duration = new Date(0, 0, 0, hours, minutes, seconds);
-
-  const video = new YoutubeVideo({
-    url, videoId, title, thumbnail, duration
-  });
-  const savedVideo = await video.save();
-
-  print(`Video added to the playlist: ${savedVideo.title}`);
+  print(`Video was added to the playlist: ${playlistSong.title}`);
   return true;
 };
 
-exports.removeSong = (link) => {
-  console.log(link);
+exports.removeSong = async (playlistSongId) => {
+  const playlistSong = await PlaylistSong.findOne({ _id: playlistSongId });
+
+  try {
+    playlistSong.set({ removed: new Date() });
+    await playlistSong.save();
+  } catch (exception) {
+    printError(`Couldn't remove song from playlist: ${exception.message}`);
+    return false;
+  }
+
+  print(`Video was removed from the playlist: ${playlistSong.title}`);
+  return true;
 };

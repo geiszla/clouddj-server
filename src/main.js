@@ -1,4 +1,5 @@
-const { addSong } = require('./playlist');
+const { addSong, removeSong } = require('./playlist');
+
 const compression = require('compression');
 const database = require('./database');
 const express = require('express');
@@ -57,5 +58,6 @@ async function main() {
   https.createServer(options, app).listen(port);
   print(`HTTPS webserver is listening at https://localhost:${port}/`);
 
-  addSong('https://youtu.be/dQw4w9WgXcQ');
+  await addSong('https://youtu.be/dQw4w9WgXcQ');
+  await removeSong('5af8c957d400c55dfc612101');
 }
