@@ -16,7 +16,8 @@ exports.addSong = async (urlString) => {
   const { pathname, hostname } = url;
 
   if (!supportedSources.some(name => hostname.includes(name))) {
-    return printError(`The source is not supported: ${hostname}`);
+    printError(`The source is not supported: ${hostname}`);
+    return;
   }
 
   const id = pathname.substring(1, pathname.length);

@@ -1,10 +1,10 @@
 {
-  "name": "clouddjserver",
-  "version": "0.0.1",
+  "name": "clouddj-server",
+  "version": "0.0.2",
   "main": "src/main.js",
   "repository": {
     "type": "git",
-    "url": ""
+    "url": "https://github.com/geiszla/clouddj-server.git"
   },
   "scripts": {
     "start": "node src/main.js"
@@ -18,19 +18,19 @@
     "express": "^4.16.3",
     "express-graphql": "^0.6.12",
     "express-session": "^1.15.6",
-    "googleapis": "^28.1.0",
+    "googleapis": "^30.0.0",
     "graphql": "^0.13.2",
-    "mongoose": "^5.0.14",
+    "mongoose": "^5.1.0",
     "youtube-audio-stream": "^0.2.0"
   },
   "devDependencies": {
-    "babel-core": "^6.26.0",
-    "babel-preset-env": "^1.6.1",
+    "babel-core": "^6.26.3",
+    "babel-preset-env": "^1.7.0",
     "eslint": "^4.19.1",
     "eslint-config-airbnb": "^16.1.0",
     "eslint-plugin-import": "^2.11.0",
     "eslint-plugin-jsx-a11y": "^6.0.3",
     "eslint-plugin-promise": "^3.7.0",
-    "eslint-plugin-react": "^7.7.0"
+    "eslint-plugin-react": "^7.8.2"
   }
 }
