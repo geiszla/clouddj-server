@@ -1061,10 +1061,6 @@ eslint@^4.19.1:
     table "4.0.2"
     text-table "~0.2.0"
 
-esm@^3.0.18:
-  version "3.0.18"
-  resolved "https://registry.yarnpkg.com/esm/-/esm-3.0.18.tgz#afdde98572af447637dc1a2841606945aa02dad0"
-
 espree@^3.5.4:
   version "3.5.4"
   resolved "https://registry.yarnpkg.com/espree/-/espree-3.5.4.tgz#b0f447187c8a8bed944b815a660bddf5deb5d1a7"
@@ -1795,10 +1791,6 @@ node-fetch@^1.0.1:
   dependencies:
     encoding "^0.1.11"
     is-stream "^1.0.1"
-
-node-fetch@^2.1.2:
-  version "2.1.2"
-  resolved "https://registry.yarnpkg.com/node-fetch/-/node-fetch-2.1.2.tgz#ab884e8e7e57e38a944753cec706f788d1768bb5"
 
 node-forge@^0.7.4:
   version "0.7.5"

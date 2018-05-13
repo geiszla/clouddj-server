@@ -4,14 +4,12 @@ const { addSong } = require('./playlist');
 const compression = require('compression');
 const database = require('./database');
 const express = require('express');
-const fetch = require('node-fetch');
-const graphQLSchema = require('./api');
 const fs = require('fs');
 const graphqlHTTP = require('express-graphql');
+const graphQLSchema = require('./api');
 const https = require('https');
 const path = require('path');
 
-global.fetch = fetch;
 global.Promise = require('bluebird');
 
 // MongoDB Database
@@ -54,7 +52,6 @@ function startWebserver(port) {
     cert: fs.readFileSync(path.join(__dirname, '/ssl/cert.crt')),
     passphrase: 'iManT'
   };
-  // process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 
   https.createServer(options, app).listen(port);
   print(`HTTPS webserver is listening on port ${port}.`);
