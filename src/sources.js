@@ -4,27 +4,28 @@ const { printError } = require('./utils');
 const { URL } = require('url');
 const { YoutubeVideo } = require('./database');
 
-const sourceFunctions = {
-  youtube: getFromYoutube
-};
 const hostnameFragments = {
   youtube: ['youtube', 'youtu.be']
+};
+const sourceFunctions = {
+  youtube: getFromYoutube
 };
 
 exports.getSong = async (urlString) => {
   const url = new URL(urlString);
   const { hostname } = url;
 
+  // Get source name
   const source = Object.keys(hostnameFragments).filter(key =>
     hostnameFragments[key].some(fragment => hostname.includes(fragment)))[0];
 
+  // Check if source is supported
   if (!source) {
     printError(`The source is not supported: ${hostname}`);
     return null;
   }
 
-  const song = await sourceFunctions[source](url);
-  return song;
+  return sourceFunctions[source](url);
 };
 
 // YouTube

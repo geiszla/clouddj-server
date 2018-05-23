@@ -18,7 +18,7 @@ async function getDependencies() {
 
   return Object.entries(packageJSON.dependencies)
     .concat(Object.entries(packageJSON.devDependencies))
-    .filter(entry => ignoredDependencies.indexOf(entry[0]) === -1);
+    .filter(entry => !ignoredDependencies.includes(entry[0]));
 }
 
 function upgrade(dependencies) {
@@ -26,9 +26,7 @@ function upgrade(dependencies) {
     console.log();
 
     const dependencyNames = dependencies.map(value => `${value[0]}@latest`);
-
     console.log(`Upgrading dependencies:\n${dependencyNames.join(', ')}\n`);
-    console.log();
 
     const upgradeProcess = childProcess.spawn(
       /^win/.test(process.platform) ? 'yarn.cmd' : 'yarn',
@@ -50,13 +48,13 @@ async function compareDependencies(oldDependencies) {
     [, newObject[newDependencies[i][0]]] = newDependencies[i];
   }
 
-  let isUpdated = false;
+  let didUpgrade = false;
   oldDependencies.forEach((entry) => {
     if (entry[1] !== newObject[entry[0]]) {
       console.log(`  ${entry[0]}: ${entry[1]} -> ${newObject[entry[0]]}`);
-      isUpdated = true;
+      didUpgrade = true;
     }
   });
 
-  if (isUpdated !== true) console.log('<none>');
+  if (!didUpgrade) console.log('<none>');
 }

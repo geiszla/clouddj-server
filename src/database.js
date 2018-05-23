@@ -4,11 +4,11 @@ const { printError } = require('./utils');
 mongoose.Promise = Promise;
 
 // Connect
-exports.connect = (address) => {
+exports.connect = async (address) => {
   const mongooseOptions = { keepAlive: 300000, connectTimeoutMS: 30000 };
 
   try {
-    mongoose.connect(`mongodb://${address}`, mongooseOptions);
+    await mongoose.connect(`mongodb://${address}`, mongooseOptions);
     return true;
   } catch (exception) {
     printError(`Error: ${exception.message}`);

@@ -1,5 +1,6 @@
 const {
   GraphQLBoolean,
+  GraphQLList,
   GraphQLNonNull,
   GraphQLObjectType,
   GraphQLSchema,
@@ -8,24 +9,19 @@ const {
 
 const { addSong, removeSong } = require('./playlist');
 
+const playlistSongType = new GraphQLObjectType({
+  name: 'PlaylistSong',
+  fields: {}
+});
+
 // Queries
 const queryType = new GraphQLObjectType({
   name: 'Query',
   fields: {
     getQueue: {
-      type: GraphQLString,
-      resolve: () => {
-        addSong('https://youtu.be/dQw4w9WgXcQ');
-      }
+      type: new GraphQLList(playlistSongType),
+      resolve: () => addSong('https://youtu.be/dQw4w9WgXcQ')
     }
-  //   whoIsGoingOut: {
-  //     type: new GraphQLList(GraphQLString),
-  //     resolve: ({ session }) => {
-  //       if (!session.isLoggedIn) return null;
-
-  //       return global.goingOutUsernames;
-  //     }
-  //   }
   }
 });
 
