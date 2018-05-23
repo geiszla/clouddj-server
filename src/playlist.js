@@ -3,6 +3,13 @@ const { print, printError } = require('./utils');
 const { getSong } = require('./sources');
 const { PlaylistSong } = require('./database');
 
+exports.get = async () => {
+  const playlist = await (PlaylistSong.find({ isRemoved: false })
+    .sort({ isFinished: 1, date: 1 }));
+
+  return playlist;
+};
+
 exports.addSong = async (url) => {
   // Get song from source
   const song = await getSong(url);
