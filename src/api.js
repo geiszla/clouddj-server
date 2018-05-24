@@ -7,10 +7,10 @@ const {
   GraphQLString
 } = require('graphql');
 
-const { addSong, removeSong } = require('./playlist');
+const { addSong, addFromHistory, removeSong } = require('./queue');
 
-const playlistSongType = new GraphQLObjectType({
-  name: 'PlaylistSong',
+const queueSongType = new GraphQLObjectType({
+  name: 'queueSong',
   fields: {}
 });
 
@@ -19,7 +19,7 @@ const queryType = new GraphQLObjectType({
   name: 'Query',
   fields: {
     getQueue: {
-      type: new GraphQLList(playlistSongType),
+      type: new GraphQLList(queueSongType),
       resolve: () => addSong('https://youtu.be/dQw4w9WgXcQ')
     }
   }
@@ -29,19 +29,26 @@ const queryType = new GraphQLObjectType({
 const mutationType = new GraphQLObjectType({
   name: 'Mutation',
   fields: {
-    addLink: {
+    addSong: {
       type: new GraphQLNonNull(GraphQLBoolean),
       args: {
         link: { type: new GraphQLNonNull(GraphQLString) }
       },
       resolve: async (_, { link }) => addSong(link)
     },
+    addFromHistory: {
+      type: new GraphQLNonNull(GraphQLBoolean),
+      args: {
+        queueSongId: { type: new GraphQLNonNull(GraphQLString) }
+      },
+      resolve: async (_, { link }) => addFromHistory(link)
+    },
     removeSong: {
       type: new GraphQLNonNull(GraphQLBoolean),
       args: {
-        playlistSongId: { type: new GraphQLNonNull(GraphQLString) }
+        queueSongId: { type: new GraphQLNonNull(GraphQLString) }
       },
-      resolve: async (_, { playlistSongId }) => removeSong(playlistSongId)
+      resolve: async (_, { queueSongId }) => removeSong(queueSongId)
     }
   }
 });

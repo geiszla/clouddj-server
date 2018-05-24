@@ -1,4 +1,5 @@
-const { addSong, removeSong } = require('./playlist');
+// const { addSong, getQueue, removeSong } = require('./queue');
+const { getQueue } = require('./queue');
 
 const compression = require('compression');
 const database = require('./database');
@@ -17,7 +18,8 @@ main();
 async function main() {
   // MongoDB Database
   const mongoAddress = 'localhost:27017';
-  if (!database.connect(mongoAddress)) process.exit(1);
+  print('Connecting to the database....');
+  if (!await database.connect(mongoAddress)) process.exit(1);
   print(`Connected to MongoDB server at mongodb://${mongoAddress}`);
 
   // HTTPS Webserver
@@ -57,7 +59,10 @@ async function main() {
   const port = 443;
   https.createServer(options, app).listen(port);
   print(`HTTPS webserver is listening at https://localhost:${port}/`);
+  console.log();
 
-  await addSong('https://youtu.be/dQw4w9WgXcQ');
-  await removeSong('5af8c957d400c55dfc612101');
+  // await addSong('https://youtu.be/dQw4w9WgXcQ');
+  // await removeSong('5af8c957d400c55dfc612101');
+  const queue = await getQueue();
+  console.log(queue);
 }

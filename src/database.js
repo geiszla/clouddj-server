@@ -5,10 +5,8 @@ mongoose.Promise = Promise;
 
 // Connect
 exports.connect = async (address) => {
-  const mongooseOptions = { keepAlive: 300000, connectTimeoutMS: 30000 };
-
   try {
-    await mongoose.connect(`mongodb://${address}`, mongooseOptions);
+    await mongoose.connect(`mongodb://${address}`);
     return true;
   } catch (exception) {
     printError(`Error: ${exception.message}`);
@@ -16,8 +14,8 @@ exports.connect = async (address) => {
   }
 };
 
-// Songs in the playlist
-const playlistSongSchema = new mongoose.Schema({
+// Songs in the queue
+const queueSongSchema = new mongoose.Schema({
   added: Date,
   addedBy: String,
 
@@ -34,9 +32,9 @@ const playlistSongSchema = new mongoose.Schema({
   thumbnail: String,
   duration: Date
 });
-playlistSongSchema.index({ isRemoved: -1, isFinished: 1, added: 1 });
+queueSongSchema.index({ isRemoved: -1, isFinished: 1, added: 1 });
 
-exports.PlaylistSong = mongoose.model('PlaylistSong', playlistSongSchema);
+exports.QueueSong = mongoose.model('queueSong', queueSongSchema);
 
 // YouTube
 const youtubeVideoSchema = new mongoose.Schema({
