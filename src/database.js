@@ -27,7 +27,8 @@ const queueSongSchema = new mongoose.Schema({
   likes: [String],
   dislikes: [String],
 
-  url: String,
+  source: String,
+  sourceId: String,
   title: String,
   thumbnail: String,
   duration: Date

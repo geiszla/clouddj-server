@@ -1,5 +1,5 @@
 // const { addSong, getQueue, removeSong } = require('./queue');
-const { getQueue } = require('./queue');
+const { addSong, playNext } = require('./queue');
 
 const compression = require('compression');
 const database = require('./database');
@@ -61,8 +61,8 @@ async function main() {
   print(`HTTPS webserver is listening at https://localhost:${port}/`);
   console.log();
 
-  // await addSong('https://youtu.be/dQw4w9WgXcQ');
-  // await removeSong('5af8c957d400c55dfc612101');
-  const queue = await getQueue();
-  console.log(queue);
+  await addSong('https://youtu.be/dQw4w9WgXcQ');
+  // await removeSong('5b106f39a555f624b4b4b96a');
+  // const queue = await getQueue();
+  await playNext();
 }

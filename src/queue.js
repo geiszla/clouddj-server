@@ -1,6 +1,6 @@
+const { getSong, playSong } = require('./sources');
 const { print, printError } = require('./utils');
 
-const { getSong } = require('./sources');
 const { QueueSong } = require('./database');
 
 exports.getQueue = async () => {
@@ -21,13 +21,7 @@ exports.addSong = async (url) => {
   // Add song to the queue
   let queueSong;
   try {
-    queueSong = await (new QueueSong({
-      added: new Date(),
-      url: song.url,
-      title: song.title,
-      thumbnail: song.thumbnail,
-      duration: song.duration
-    }).save());
+    queueSong = await createQueueSong(song).save();
   } catch (exception) {
     printError(`Couldn't add song to queue: ${exception.message}`);
     return false;
@@ -47,13 +41,7 @@ exports.addFromHistory = async (queueSongId) => {
   }
 
   try {
-    queueSong = await (new QueueSong({
-      added: new Date(),
-      url: queueSong.url,
-      title: queueSong.title,
-      thumbnail: queueSong.thumbnail,
-      duration: queueSong.duration
-    }).save());
+    queueSong = await createQueueSong(queueSong).save();
   } catch (exception) {
     printError(`Couldn't add song from history to queue: ${exception.message}`);
     return false;
@@ -64,7 +52,7 @@ exports.addFromHistory = async (queueSongId) => {
 };
 
 exports.removeSong = async (queueSongId) => {
-  const queueSong = await queueSong.findOne({ _id: queueSongId });
+  const queueSong = await QueueSong.findOne({ _id: queueSongId });
 
   if (!queueSong) {
     const errorString = `Song with id "${queueSongId}" was not found.`;
@@ -83,3 +71,19 @@ exports.removeSong = async (queueSongId) => {
   print(`Video was removed from the queue: ${queueSong.title}`);
   return true;
 };
+
+exports.playNext = async () => {
+  const nextSong = await QueueSong.findOne().sort({ added: 1 });
+  playSong(nextSong);
+};
+
+function createQueueSong(song) {
+  return new QueueSong({
+    added: new Date(),
+    source: song.source,
+    sourceId: song.sourceId,
+    title: song.title,
+    thumbnail: song.thumbnail,
+    duration: song.duration
+  });
+}
